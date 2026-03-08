@@ -1,0 +1,27 @@
+{
+  "name": "simso",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "dev:web": "turbo dev --filter=@simso/web",
+    "dev:mobile": "turbo dev --filter=@simso/mobile",
+    "dev:avatar": "turbo dev --filter=@simso/avatar",
+    "build:web": "turbo build --filter=@simso/web",
+    "build:avatar": "turbo build --filter=@simso/avatar",
+    "db:generate": "npm run db:generate --workspace=@simso/database",
+    "db:push": "npm run db:push --workspace=@simso/database",
+    "db:migrate": "npm run db:migrate --workspace=@simso/database",
+    "db:studio": "npm run db:studio --workspace=@simso/database",
+    "db:seed": "npm run db:seed --workspace=@simso/database"
+  },
+  "devDependencies": {
+    "turbo": "^2"
+  },
+  "packageManager": "npm@9.6.7"
+}
