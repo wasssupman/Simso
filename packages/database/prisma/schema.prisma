@@ -1,0 +1,129 @@
+// 심소(SIMSO) 데이터베이스 스키마
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 사용자
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // 해시된 비밀번호
+  nickname  String   @unique
+  bio       String?  @db.VarChar(100) // 한 줄 소개
+  avatar    String?  // 프로필 이미지 URL
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 관계
+  keywords  UserKeyword[] // 관심 키워드 (다대다)
+  posts     Post[]        // 작성한 글
+  empathies Empathy[]     // 공감한 글
+  boards    Board[]       // 게시판 글
+
+  @@map("users")
+}
+
+// 관심 키워드 (사용자-키워드 중간 테이블)
+model UserKeyword {
+  id        String   @id @default(cuid())
+  userId    String
+  keyword   String   @db.VarChar(20)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, keyword])
+  @@index([userId])
+  @@map("user_keywords")
+}
+
+// 게시글 (오늘의 소소함)
+model Post {
+  id        String   @id @default(cuid())
+  userId    String
+  content   String   @db.VarChar(300) // 본문 (300자 제한)
+  imageUrl  String?  // 이미지 URL (1장)
+  keywords  String[] // 키워드 배열 (최대 3개)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 관계
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  empathies Empathy[] // 공감
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("posts")
+}
+
+// 공감 (좋아요 대신)
+model Empathy {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId]) // 한 사용자당 한 글에 한 번만 공감
+  @@index([postId])
+  @@index([userId])
+  @@map("empathies")
+}
+
+// 계절 게시판 (비움 일지, 산책 기록 등)
+model Board {
+  id        String      @id @default(cuid())
+  userId    String
+  category  BoardCategory // 게시판 카테고리
+  season    Season      // 계절
+  title     String      @db.VarChar(100)
+  content   String      @db.Text
+  imageUrl  String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([category])
+  @@index([season])
+  @@index([createdAt])
+  @@map("boards")
+}
+
+// 게시판 카테고리
+enum BoardCategory {
+  EMPTY      // 비움 일지
+  WALK       // 산책 기록
+  RECIPE     // 소소 레시피
+  HOBBY      // 고요한 취미
+}
+
+// 계절
+enum Season {
+  SPRING // 봄
+  SUMMER // 여름
+  AUTUMN // 가을
+  WINTER // 겨울
+}
+
+// 일일 게시 제한 추적 (1일 1글)
+model DailyPostLimit {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime @db.Date // 날짜만 (시간 제외)
+  postCount Int      @default(1)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, date])
+  @@index([userId, date])
+  @@map("daily_post_limits")
+}
