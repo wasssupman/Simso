@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+/* 심소 디자인 시스템 */
+:root {
+  --color-ivory: #FAF8F5;
+  --color-beige: #F0EBE3;
+  --color-warm-gray: #8A827A;
+  --color-olive: #6B7F5A;
+  --color-ink: #1A1A1A;
+  --color-ink-light: #4A4540;
+}
+
+@theme inline {
+  --color-background: var(--color-ivory);
+  --color-foreground: var(--color-ink);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 스크롤바 숨기기 */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* 페이드인 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
