@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+:root {
+  --color-ivory: #FAF8F5;
+  --color-beige: #F0EBE3;
+  --color-warm-gray: #8A827A;
+  --color-olive: #6B7F5A;
+  --color-ink: #1A1A1A;
+  --color-ink-light: #4A4540;
+}
+
+@theme inline {
+  --font-serif: var(--font-serif-kr);
+  --color-background: var(--color-ivory);
+  --color-foreground: var(--color-ink);
+}
+
+body {
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  font-family: "Noto Serif KR", Georgia, serif;
+}
+
+/* 키워드 필터 스크롤바 숨기기 */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* 페이드인 애니메이션 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
